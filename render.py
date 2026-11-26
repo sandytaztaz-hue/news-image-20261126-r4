@@ -502,17 +502,31 @@ def main():
     d.rectangle([mx, my, mx + mw2, my + mh2], outline=LINE, width=1)
 
     # ---- DATE CHECK ----
-    d.rectangle([12, 874, 1012, 958], outline=RED, width=2, fill=(255, 248, 246))
-    d.text((20, 880), "DATE CHECK — NOT 26 NOVEMBER, EXCLUDED:",
-           font=SANS_B(11), fill=RED)
+    # Box geometry unchanged from R4 (same full-width rect, same spot);
+    # colour scheme goes red -> black and every text line is centred
+    # inside the box: the header across the whole box, each item line
+    # centred inside its own half of the box.
+    bx0, bx1, by0, by1 = 12, 1012, 874, 958
+    d.rectangle([bx0, by0, bx1, by1], outline=(0, 0, 0), width=2,
+                fill=(255, 255, 255))
+    hf = SANS_B(11)
+    ht = "DATE CHECK — NOT 26 NOVEMBER, EXCLUDED:"
+    d.text(((bx0 + bx1 - hf.getlength(ht)) / 2, 880), ht, font=hf,
+           fill=(0, 0, 0))
     for i, (dt, txt) in enumerate(DATECHECK):
         col = 0 if i < 5 else 1
         row = i if i < 5 else i - 5
-        x = 20 if col == 0 else 516
+        span = bx1 - bx0
+        half_c = bx0 + span / 4 if col == 0 else bx0 + 3 * span / 4
+        bf = SANS_B(8)
+        tf = SANS(8)
+        mark = "✕ " + dt
+        w = bf.getlength(mark) + 4 + tf.getlength(txt)
+        x = half_c - w / 2
         y = 898 + row * 12
-        f = SANS_B(8)
-        d.text((x, y), "✕ " + dt, font=f, fill=RED)
-        d.text((x + f.getlength("✕ " + dt) + 4, y), txt, font=SANS(8), fill=(60, 55, 50))
+        d.text((x, y), mark, font=bf, fill=(0, 0, 0))
+        d.text((x + bf.getlength(mark) + 4, y), txt, font=tf,
+               fill=(60, 55, 50))
 
     # ---- footer ----
     f = SANS_B(10)
