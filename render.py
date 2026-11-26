@@ -474,21 +474,27 @@ def main():
             d.text((x0 + col_w - fs.getlength(src), y + 1), src, font=fs, fill=GREY)
 
     # ---- world map (small panel, bottom of right briefs column) ----
+    # Caption lives in its own header strip ABOVE the map drawing, so no
+    # text ever overlaps the map. The map (continents + pins) is confined
+    # to the strip below the header; pins keep their lon/lat positions.
     mx, my, mw2, mh2 = 516, 818, 496, 50
+    hdr_h = 14
+    map_y0 = my + hdr_h + 1          # 833: first row of the map area
+    map_h = mh2 - hdr_h - 1          # 35: map area height
     d.rectangle([mx, my, mx + mw2, my + mh2], fill=(220, 232, 240), outline=LINE, width=1)
-    d.rectangle([mx, my, mx + 148, my + 13], fill=(255, 255, 255))
-    d.text((mx + 4, my + 2), "WORLD MAP — KEY PINS", font=SANS_B(8), fill=INK)
+    d.rectangle([mx, my, mx + mw2, my + hdr_h], fill=(255, 255, 255))
+    d.line([mx, my + hdr_h, mx + mw2, my + hdr_h], fill=LINE, width=1)
+    d.text((mx + 4, my + 2), "WORLD MAP — PINS 1, 2, 3, 5, 7, 14, 15", font=SANS_B(8), fill=INK)
     for poly in CONTINENTS:
-        pts = [(mx + (lon + 180) / 360 * mw2, my + (85 - lat) / 145 * mh2) for lon, lat in poly]
+        pts = [(mx + (lon + 180) / 360 * mw2, map_y0 + (85 - lat) / 145 * map_h) for lon, lat in poly]
         d.polygon(pts, fill=(168, 178, 158))
     for num, lon, lat in [(1, -74, 41), (2, 72, 19), (3, 6, 46), (5, 30, 50),
                           (7, 54, 24), (14, 47, 25), (15, 121, 25)]:
         px = mx + (lon + 180) / 360 * mw2
-        py = my + (85 - lat) / 145 * mh2
+        py = map_y0 + (85 - lat) / 145 * map_h
         d.ellipse([px - 5, py - 5, px + 5, py + 5], fill=RED, outline=(255, 255, 255), width=1)
         f = SANS_B(7)
         d.text((px - f.getlength(str(num)) / 2, py - 5), str(num), font=f, fill=(255, 255, 255))
-    d.text((mx + mw2 - 158, my + 2), "PINS 1, 2, 3, 5, 7, 14, 15", font=SANS_B(7), fill=GREY)
 
     # ---- DATE CHECK ----
     d.rectangle([12, 874, 1012, 958], outline=RED, width=2, fill=(255, 248, 246))
