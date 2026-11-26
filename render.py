@@ -496,6 +496,11 @@ def main():
         f = SANS_B(7)
         d.text((px - f.getlength(str(num)) / 2, py - 5), str(num), font=f, fill=(255, 255, 255))
 
+    # Repaint the panel border LAST: the white header strip above is painted
+    # over the panel's top edge and the top of its right edge, so the
+    # outline must be redrawn on top for a complete frame on all four sides.
+    d.rectangle([mx, my, mx + mw2, my + mh2], outline=LINE, width=1)
+
     # ---- DATE CHECK ----
     d.rectangle([12, 874, 1012, 958], outline=RED, width=2, fill=(255, 248, 246))
     d.text((20, 880), "DATE CHECK — NOT 26 NOVEMBER, EXCLUDED:",
